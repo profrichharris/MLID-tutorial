@@ -10,9 +10,37 @@ calcID <- function(formula, data) {
   return(round(id, 3))
 }
 
-IDsim <- function(formula, data, total=NULL, weights=NULL, seed=NULL, times=1000) {
+IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   if(!is.null(seed)) set.seed(seed)
-  
+  y <- attr(terms(formula),"variables")[[2]]
+  x <- attr(terms(formula),"variables")[[3]]
+  ifelse(length(attr(terms(formula),"variables")) > 3, t <- attr(terms(formula),"variables")[[4]], t <- NA)
+  y <- which(names(data) == y)
+  x <- which(names(data) == x)
+  t <- as.character(t)
+  if(!is.na(t)) t <- which(names(data) == t)
+  if(length(x) == 0L | length(x) == 0L | length(t) == 0L) stop("variables in the formula not found in the data set")
+  y <- data[,y]
+  x <- data[,x]
+  ifelse(is.na(t), t <- x + y, t <- data[,t])
+  N <- nrow(data)
+  Py <- sum(y) / sum(t)
+  Px <- sum(x) / sum(t)
+  pt <- t/sum(t)
+  results <- vector("numeric", times)
+  for(i in 1: times) {
+    if(!quiet) cat("\nSimulation",i,"of",times)
+    that <- rbinom(N, sum(t), pt)
+    y <- rbinom(N, that, Py)
+    x <- rbinom(N, that, Px)
+    results[i] <- calcID(y ~ x, data=data.frame(y,x))
+  }
+  qq <- c(quantile(results, probs=c(0.005, 0.025, 0.5, 0.975, 0.995)),mean(results))
+  qq <- round(qq, 5)
+  names(qq)[6] <- "mean"
+  cat("\n\n")
+  print(qq)
+  invisible(results)
 }
 
 

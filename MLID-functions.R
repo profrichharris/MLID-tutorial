@@ -41,10 +41,10 @@ IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   names(qq)[6] <- "mean"
   eid <- round(mean(results),3)
   cat("\n\n")
-  cat("\nThe measured ID value is",print(id,digits=3))
-  cat("\nThe expected value is",print(id,digits=3))
-  cat("\nThe expected value is",print(round(100*eid/id,3),digits=3),"per cent of the measured value")
-  cat("\nThe measured value is",print(round(id/eid,3),digits=3),"times greater than expected under randomisation")
+  cat("\nThe measured ID value is",id)
+  cat("\nThe expected value is",id)
+  cat("\nThe expected value is",round(100*eid/id,3),"per cent of the measured value")
+  cat("\nThe measured value is",round(id/eid,3),"times greater than expected under randomisation")
   cat("\n\nDistribution of the simulated values:\n")
   print(qq)
   attr(results, "ID") <- id

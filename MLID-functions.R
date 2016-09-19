@@ -10,6 +10,8 @@ calcID <- function(formula, data) {
   return(round(id, 3))
 }
 
+
+
 IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   id <- round(calcID(formula, data),4)
   if(!is.null(seed)) set.seed(seed)
@@ -51,6 +53,54 @@ IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   attr(results, "EID") <- eid  
   invisible(results)
 }
+
+
+
+regional.values <- function(formula, data) {
+  
+  calcs <- function(x, ...) {
+    esub <- e[x]
+    share <- 100 * sum(abs(esub)) / sum(abs(e))
+    n <- length(esub)
+    impact <- sum(abs(esub)) / (n * mean(abs(e))) * 100
+    z <- sum(abs(esub)) / (n * se)
+    share <- round(share,5)
+    impact <- round(impact, 0)
+    z <- round(z, 3)
+    return(c(share, impact, z, n))
+  }
+  
+  y <- attr(terms(formula),"variables")[[2]]
+  x <- attr(terms(formula),"variables")[[3]]
+  gp <- attr(terms(formula),"variables")[[4]]
+  
+  y <- which(names(data) == y)
+  x <- which(names(data) == x)
+  gp <- which(names(data) == gp)  
+  
+  y <- data[,y]
+  x <- data[,x]
+  Y <- y/sum(y)
+  X <- x/sum(x)
+  gp <- data[,gp]
+  
+  ols <- lm(Y ~ 0, offset=X, data=data)
+  e <- residuals(ols)
+  N <- nrow(data)
+  se <- summary(ols)$sigma
+  
+  res <- tapply(1:N, gp, calcs, e, se)
+  n <- length(res)
+  results <- matrix(nrow=n, ncol=4)
+  rownames(results) <- names(res)
+  colnames(results) <- c("share","impact","z","n_j")
+  for(i in 1: n) {
+    results[i,] <- res[i][[1]]
+  }
+  return(results) 
+  
+}
+
 
 
 dvals <- function(mlm) {

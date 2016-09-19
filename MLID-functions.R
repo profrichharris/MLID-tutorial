@@ -71,12 +71,12 @@ regional.values <- function(formula, data) {
   }
   
   y <- attr(terms(formula),"variables")[[2]]
-  x <- attr(terms(formula),"variables")[[3]]
-  gp <- attr(terms(formula),"variables")[[4]]
+  x <- attr(terms(formula),"variables")[[3]][2]
+  gp <- attr(terms(formula),"variables")[[3]][3]
   
   y <- which(names(data) == y)
-  x <- which(names(data) == x)
-  gp <- which(names(data) == gp)  
+  x <- which(names(data) == as.character(x))
+  gp <- which(names(data) == as.character(gp))  
   
   y <- data[,y]
   x <- data[,x]

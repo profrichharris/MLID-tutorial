@@ -11,6 +11,7 @@ calcID <- function(formula, data) {
 }
 
 IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
+  id <- round(calcID(formula, data),3)
   if(!is.null(seed)) set.seed(seed)
   y <- attr(terms(formula),"variables")[[2]]
   x <- attr(terms(formula),"variables")[[3]]
@@ -38,8 +39,16 @@ IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   qq <- c(quantile(results, probs=c(0.005, 0.025, 0.5, 0.975, 0.995)),mean(results))
   qq <- round(qq, 5)
   names(qq)[6] <- "mean"
+  eid <- round(mean(results),3)
   cat("\n\n")
+  cat("\nThe measured ID value is",print(id,digits=3))
+  cat("\nThe expected value is",print(id,digits=3))
+  cat("\nThe expected value is",print(round(100*eid/id,3),digits=3),"per cent of the measured value")
+  cat("\nThe measured value is",print(round(id/eid,3),digits=3),"times greater than expected under randomisation")
+  cat("\n\nDistribution of the simulated values:\n")
   print(qq)
+  attr(results, "ID") <- id
+  attr(results, "EID") <- eid  
   invisible(results)
 }
 

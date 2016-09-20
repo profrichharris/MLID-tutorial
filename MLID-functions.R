@@ -103,7 +103,7 @@ regional.values <- function(formula, data) {
 
 
 
-dvals <- function(mlm) {
+rvals <- function(mlm) {
   
   resids <- residuals(mlm)
   rf <- ranef(mlm)

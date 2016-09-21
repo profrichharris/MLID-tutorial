@@ -33,9 +33,9 @@ IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   eid <- round(mean(results),4)
   cat("\n\n")
   cat("\nThe measured ID value is",id)
-  cat("\nThe expected value is",id)
-  cat("\nThe expected value is",round(100*eid/id,3),"per cent of the measured value")
-  cat("\nThe measured value is",round(id/eid,3),"times greater than expected under randomisation")
+  cat("\nThe expected value is",eid)
+  cat("\nThe expected value is",round(100*eid/id,2),"per cent of the measured value")
+  cat("\nThe measured value is",round(id/eid,2),"times greater than expected under randomisation")
   cat("\n\nDistribution of the simulated values:\n")
   print(qq)
   attr(results, "ID") <- id
@@ -90,6 +90,19 @@ regional.values <- function(formula, data) {
   
 }
 
+
+mlid <- function(formula, offset, data) {
+  y <- which(names(data) == formula[[2]])
+  x <- which(names(data) == offset)
+  y <- data[,y]
+  x <- data[,x]
+  Y <- y/sum(y)
+  X <- x/sum(x)
+  formula <- formula(paste("Y ~",formula[[3]])[2])
+  require(lme4)
+  mlm <- lmer(formula=formula, data=data, offset=X)
+  return(mlm)
+}
 
 
 rvals <- function(mlm) {

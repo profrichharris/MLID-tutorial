@@ -1,11 +1,7 @@
 calcID <- function(formula, data) {
-  y <- attr(terms(formula),"variables")[[2]]
-  x <- attr(terms(formula),"variables")[[3]]
-  y <- which(names(data) == y)
-  x <- which(names(data) == x)
-  if(length(x) == 0L | length(x) == 0L) stop("variables in the formula not found in the data set")
-  y <- data[,y]
-  x <- data[,x]
+  data <- model.frame(formula, data)
+  y <- data[,1]
+  x <- data[,2]
   id <- 0.5*sum(abs(y/sum(y) - x/sum(x)))
   return(round(id, 3))
 }
@@ -15,17 +11,10 @@ calcID <- function(formula, data) {
 IDsim <- function(formula, data, seed=NULL, times=100, quiet=F) {
   id <- round(calcID(formula, data),4)
   if(!is.null(seed)) set.seed(seed)
-  y <- attr(terms(formula),"variables")[[2]]
-  x <- attr(terms(formula),"variables")[[3]]
-  ifelse(length(attr(terms(formula),"variables")) > 3, t <- attr(terms(formula),"variables")[[4]], t <- NA)
-  y <- which(names(data) == y)
-  x <- which(names(data) == x)
-  t <- as.character(t)
-  if(!is.na(t)) t <- which(names(data) == t)
-  if(length(x) == 0L | length(x) == 0L | length(t) == 0L) stop("variables in the formula not found in the data set")
-  y <- data[,y]
-  x <- data[,x]
-  ifelse(is.na(t), t <- x + y, t <- data[,t])
+  data <- model.frame(formula, data)
+  y <- data[,1]
+  x <- data[,2]
+  ifelse(ncol(data) == 2, t <- x + y, t <- data[,3])
   N <- nrow(data)
   Py <- sum(y) / sum(t)
   Px <- sum(x) / sum(t)

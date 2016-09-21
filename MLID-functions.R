@@ -105,6 +105,33 @@ mlid <- function(formula, offset, data) {
 }
 
 
+mlvar <- function(mlm) {
+  
+  vv <- VarCorr(mlm)
+  res <- attr(vv, "sc")
+  
+  for(i in 1: length(vv)) {
+    
+    res <- c(res,attr(vv[[i]], "stddev"))
+    
+  }
+  
+  res <- res^2
+  names(res) <- c("ID",names(vv))
+  return(res)
+}
+
+
+varshare <- function(mlm=NULL, mlvar=NULL) {
+  
+  if(is.null(mlvar)) mlvar <- mlvar(mlm)
+  mlvar <- mlvar/sum(mlvar)*100
+  return(round(mlvar,2))
+  
+}
+
+
+
 rvals <- function(mlm) {
   
   resids <- residuals(mlm)
@@ -126,6 +153,8 @@ rvals <- function(mlm) {
   return(results)
   
 }
+
+
 
 
 condVar <- function(model) {

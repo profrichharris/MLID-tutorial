@@ -117,7 +117,7 @@ mlvar <- function(mlm) {
   }
   
   res <- res^2
-  names(res) <- c("ID",names(vv))
+  names(res) <- c("Base",names(vv))
   return(res)
 }
 
@@ -149,7 +149,7 @@ rvals <- function(mlm) {
     results[,(i+1)] <- rf[[i]][mch,1]
     
   }
-  
+  rownames(results)[1] <- "Base"
   return(results)
   
 }

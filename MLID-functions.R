@@ -138,7 +138,7 @@ rvals <- function(mlm) {
   rf <- ranef(mlm)
   results <- matrix(nrow=length(resids), ncol=length(rf)+1)
   rownames(results) <- names(resids)
-  colnames(results) <- c("",names(rf))
+  colnames(results) <- c("Base",names(rf))
   
   results[,1] <- resids
   mod.data <- slot(mlm, "frame")
@@ -149,7 +149,6 @@ rvals <- function(mlm) {
     results[,(i+1)] <- rf[[i]][mch,1]
     
   }
-  rownames(results)[1] <- "Base"
   return(results)
   
 }

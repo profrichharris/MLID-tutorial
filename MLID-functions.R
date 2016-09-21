@@ -98,7 +98,7 @@ mlid <- function(formula, offset, data) {
   x <- data[,x]
   Y <- y/sum(y)
   X <- x/sum(x)
-  formula <- formula(paste("Y ~",formula[[3]])[2])
+  formula <- formula(paste("Y ~",strsplit(as.character(formula),"~")[[3]]))
   require(lme4)
   mlm <- lmer(formula=formula, data=data, offset=X)
   return(mlm)

@@ -155,6 +155,24 @@ rvals <- function(mlm) {
 
 
 
+holdback <- function(mlm=NULL, rvals=NULL) {
+  if(is.null(rvals)) results <- rvals(mlm)
+  k <- ncol(results)
+  hb <- rep(NA, k)
+  rwsm <- rowSums(results)
+  ID <- sum(abs(rwsm))
+  for(i in 1:k) {
+    
+    rwsm <- rowSums(results[,-i])
+    hb[i] <-  sum(abs(rwsm))/ID - 1
+    
+  }
+  names(hb) <- colnames(results)
+  return(round(hb*100,1))
+  
+}
+
+
 
 condVar <- function(model) {
   cat("\nCalculating variances, please wait")  
@@ -162,7 +180,8 @@ condVar <- function(model) {
   return(u0)
 }
 
-catplot <- function(model, var=NULL, level=2, method=c("quick","goldstein"), scale=T, labels=F, z=NULL, sigma=NULL, cex=0.7, add=F, ymin=NULL, ymax=NULL) {
+catplot <- function(model, var=NULL, level=2, method=c("quick","goldstein"), scale=T, labels=F, z=NULL, sigma=NULL, cex=0.7, add=F, ymin=NULL, ymax=NULL,
+                    height=4.3228346, width=2*4.4173228) {
   
   alpha <- 0.05
   
@@ -214,7 +233,7 @@ catplot <- function(model, var=NULL, level=2, method=c("quick","goldstein"), sca
     ifelse(is.null(sigma), ci <- ci/sigma(model), ci <- ci/sigma)
   }
   
-  if(!add) {quartz(height=4.3228346, width=4.4173228)
+  if(!add) {quartz(height=height, width=width)
     par(mai=c(0.85,0.90,0.25,0.25))
   }
   

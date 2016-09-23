@@ -188,7 +188,7 @@ condVar <- function(mlm) {
 
 
 catplot <- function(model, var=NULL, level=2, method=c("quick","goldstein"), scale=T, labels=F, z=NULL, sigma=NULL, cex=0.7, add=F,
-                    ymin=NULL, ymax=NULL, height=4.5, width=10) {
+                    ymin=NULL, ymax=NULL, height=NULL, width=NULL) {
   
   alpha <- 0.05
   
@@ -241,7 +241,7 @@ catplot <- function(model, var=NULL, level=2, method=c("quick","goldstein"), sca
   }
   
   if(!add) {
-    quartz(height=height, width=width)
+    if(!is.null(height) & !is.null(width)) dev.new(height=height, width=width)
     par(mai=c(0.85,0.90,0.25,0.25))
   }
   
